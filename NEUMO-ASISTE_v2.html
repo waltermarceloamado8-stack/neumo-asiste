@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NEUMO-ASISTE</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#edf6f7;color:#18343b}
+.app{max-width:440px;margin:auto;min-height:100vh;background:#fff}
+header{background:#087f8c;color:#fff;padding:24px 20px 22px;border-radius:0 0 24px 24px}
+h1{margin:5px 0;font-size:27px}header p{margin:6px 0 0;line-height:1.4}
+main{padding:18px}.notice{background:#e8f6f4;padding:15px;border-radius:17px;margin-bottom:16px;line-height:1.45}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}button{font:inherit;border:0;cursor:pointer;border-radius:15px}
+.card{background:#f4f8f9;padding:16px;text-align:left;min-height:100px}.card:hover{background:#e5f2f3}
+.icon{font-size:27px;display:block;margin-bottom:7px}.small{font-size:13px;color:#63777c}
+.list button{width:100%;padding:15px;margin:0 0 9px;text-align:left;background:#f4f8f9}
+.back{background:white;border:1px solid #c9dadd;padding:10px 14px;margin-bottom:12px}
+.chat{margin-top:17px}.bubble{padding:14px 15px;border-radius:16px;margin:9px 0;line-height:1.5}
+.q{background:#d9f0ed;margin-left:28px}.a{background:#f2f6f7;margin-right:15px}
+.alert{background:#fff1e5;border-left:5px solid #dc7625;padding:13px;border-radius:10px;line-height:1.45}
+.urgent{background:#fff0f0;border:1px solid #e2aaaa}.tag{display:inline-block;background:#e1f1f0;padding:4px 8px;border-radius:20px;font-size:12px;margin-bottom:6px}
+footer{text-align:center;color:#6d7f84;font-size:12px;padding:18px 22px;line-height:1.5}
+</style>
+</head>
+<body><div class="app">
+<header><div>Servicio de Neumonología</div><h1>🫁 NEUMO-ASISTE</h1><p>Información sencilla para acompañarte durante tu internación.</p></header>
+<main><div class="notice"><b>Hola 👋</b><br>Elegí un tema. Las respuestas son educativas y no reemplazan la valoración del equipo de salud.</div>
+<div id="content"></div><div id="chat" class="chat" hidden></div></main>
+<footer>Si tenés un síntoma nuevo o un empeoramiento, avisá al personal de Enfermería. No cambies por tu cuenta el oxígeno, la medicación ni la posición de dispositivos.</footer>
+</div>
+<script>
+const data={
+"🏥 Mi internación":[
+["¿Por qué estoy internado?","La internación permite controlar tu evolución, realizar estudios y administrar el tratamiento indicado para tu situación."],
+["¿Cuánto tiempo voy a estar internado?","Depende de tu evolución y de los objetivos del tratamiento. El equipo médico te informará qué condiciones se esperan antes del alta."],
+["¿Por qué me controlan tantas veces?","Los controles permiten detectar cambios y comprobar cómo estás respondiendo al tratamiento."],
+["¿Puedo caminar?","Depende de tu estado clínico y de las indicaciones del equipo. Preguntá antes de levantarte si necesitás ayuda o tenés dispositivos conectados."]
+],
+"🫁 Respiración y oxígeno":[
+["¿Por qué necesito oxígeno?","Se utiliza cuando el organismo necesita ayuda para mantener una adecuada oxigenación. El flujo indicado depende de cada paciente."],
+["¿Puedo sacarme la cánula?","No la retires por tu cuenta. Si te molesta, se seca la nariz o sentís que necesitás más o menos oxígeno, avisá a Enfermería."],
+["¿Por qué cambió mi saturación?","La saturación puede variar por la respiración, la actividad, secreciones, posición y otras causas. El equipo debe interpretar el valor junto con tu estado clínico."],
+["¿Qué significa EPOC?","Es una enfermedad respiratoria crónica que puede dificultar el paso del aire. Durante una internación pueden aparecer períodos de empeoramiento que requieren tratamiento y controles."],
+["¿Qué es una neumonía?","Es una infección o inflamación del tejido pulmonar. Puede producir tos, fiebre, secreciones y dificultad respiratoria, aunque los síntomas varían según la persona."]
+],
+"💊 Tratamientos":[
+["¿Por qué me hacen nebulizaciones?","Permiten administrar determinados medicamentos directamente a las vías respiratorias. El medicamento y la frecuencia dependen de la indicación."],
+["¿Por qué recibo antibióticos?","Se indican cuando el equipo considera que existe una infección bacteriana o una situación que justifica su uso. No todas las infecciones respiratorias necesitan antibióticos."],
+["¿Por qué me dan corticoides?","Pueden utilizarse en determinadas enfermedades o situaciones respiratorias para disminuir la inflamación. La indicación depende del diagnóstico."],
+["¿Puedo tomar mi medicación habitual?","No agregues, suspendas ni cambies medicamentos por tu cuenta. Informá al equipo todo lo que tomás habitualmente."]
+],
+"🩻 Estudios":[
+["¿Para qué sirve una radiografía de tórax?","Permite observar pulmones y otras estructuras del tórax y ayuda a evaluar cambios durante la internación."],
+["¿Para qué sirve una TAC?","Produce imágenes más detalladas del tórax y puede ayudar a estudiar pulmones, pleura y otras estructuras."],
+["¿Qué es una gasometría?","Es un análisis de sangre que permite valorar, entre otros parámetros, oxígeno y dióxido de carbono y el equilibrio ácido-base."],
+["¿Por qué repiten los estudios?","A veces es necesario comparar resultados para conocer la evolución y valorar la respuesta al tratamiento."]
+],
+"🩺 Procedimientos":[
+["¿Qué es un drenaje pleural?","Es un tubo colocado en el espacio que rodea al pulmón para ayudar a retirar aire o líquido cuando existe una indicación médica."],
+["¿Puedo tocar el drenaje?","No. No manipules, desconectes ni cambies la posición del sistema. Si algo te preocupa, avisá al personal."],
+["¿Qué hago si veo que el drenaje cambió?","No lo manipules. Avisá a Enfermería para que pueda revisar el sistema y valorar al paciente."],
+["¿Por qué me aspiran secreciones?","Cuando una persona no puede eliminar adecuadamente sus secreciones, el equipo puede realizar una aspiración para ayudar a mantener la vía aérea despejada."]
+],
+"👨‍👩‍👧 Familiares":[
+["¿Cuándo puedo hablar con el médico?","Consultá al personal del servicio cuál es el horario y circuito establecido para la información médica."],
+["¿Puedo traer alimentos?","Consultá antes. La alimentación puede tener restricciones según el diagnóstico, estudios o tratamiento."],
+["¿Puedo traer medicamentos de casa?","Informá al equipo sobre la medicación habitual, pero no administres medicamentos por tu cuenta durante la internación."],
+["¿Cómo puedo ayudar al paciente?","Acompañarlo, respetar las indicaciones del equipo, evitar manipular dispositivos y avisar si observás un cambio importante."]
+],
+"🚨 ¿Cuándo debo avisar?":[
+["Me falta más el aire","Si la falta de aire aparece o aumenta, avisá inmediatamente a Enfermería. No esperes a que desaparezca y no modifiques el oxígeno por tu cuenta.",true],
+["Tengo dolor intenso o nuevo","Avisá al personal. Indicá dónde duele, desde cuándo y, si podés, la intensidad.",true],
+["Me siento muy mareado o me voy a desmayar","Avisá inmediatamente y no intentes levantarte solo.",true],
+["Tengo labios o cara azulados","Avisá inmediatamente al personal de salud. Es una situación que requiere valoración rápida.",true],
+["Tengo fiebre o escalofríos","Informá al personal para que valore el síntoma y determine si necesita controles o estudios.",true],
+["Se salió una vía, sonda o drenaje","No intentes reconectarlo. Avisá inmediatamente a Enfermería.",true],
+["Estoy confundido o muy somnoliento","Avisá inmediatamente al personal, especialmente si es un cambio respecto de tu estado habitual.",true]
+],
+"🧼 Cuidados y alta":[
+["¿Por qué es importante lavarse las manos?","La higiene de manos ayuda a disminuir la transmisión de microorganismos y protege a pacientes, familiares y trabajadores."],
+["¿Puedo recibir visitas si estoy aislado?","Depende del tipo de aislamiento y de las normas del servicio. Consultá al personal antes de ingresar."],
+["¿Qué pasa antes del alta?","El equipo revisa la evolución, el tratamiento, los estudios y las condiciones necesarias para continuar los cuidados fuera del hospital."],
+["¿Qué debo preguntar antes de irme?","Es útil conocer los medicamentos indicados, cómo tomarlos, controles posteriores, signos de alarma y a dónde consultar si empeorás."]
+]};
+const c=document.getElementById("content"),chat=document.getElementById("chat");
+function home(){chat.hidden=true;c.className="grid";c.innerHTML="";Object.keys(data).forEach(k=>{let b=document.createElement("button");b.className="card";b.innerHTML=`<span class="icon">${k.slice(0,2)}</span><b>${k.slice(2)}</b><br><span class="small">${data[k].length} temas</span>`;b.onclick=()=>category(k);c.appendChild(b)})}
+function category(k){chat.hidden=true;c.className="list";c.innerHTML="";let back=document.createElement("button");back.className="back";back.textContent="← Volver al inicio";back.onclick=home;c.appendChild(back);data[k].forEach(x=>{let b=document.createElement("button");b.textContent=x[0];b.onclick=()=>answer(x);c.appendChild(b)})}
+function answer(x){chat.hidden=false;chat.innerHTML=`<div class="bubble q"><b>${x[0]}</b></div><div class="bubble a">${x[1]}</div>${x[2]?'<div class="alert urgent"><b>🚨 Avisá a Enfermería ahora.</b><br>El chatbot no puede evaluar una emergencia ni reemplazar la valoración presencial.</div>':''}`;chat.scrollIntoView({behavior:"smooth"})}
+home();
+</script></body></html>
